@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, StyleSheet, Button, Text, TouchableWithoutFeedback, Keyboard, Alert } from 'react-native';
+import { View, StyleSheet, Button, Text, TouchableWithoutFeedback, TouchableOpacity, Keyboard, Alert } from 'react-native';
 
 import Card from '../components/Card';
 import colors from '../constants/colors';
@@ -11,8 +11,9 @@ const StartGame = props => {
     const [enteredValue, setEnteredValue] = useState(' ');
     const [confirmed, setConfirmed] = useState(false);
     const [selectedNumber, setSelectedNumber] = useState();
+    const [counter, changeCounter] = useState(0);
 
-    const numberInputHandler = inputText => {
+    const numberInputHandler = (inputText) => {
         setEnteredValue(inputText.replace(/[^0-9]/g, ''));
     };
 
@@ -33,16 +34,26 @@ const StartGame = props => {
         Keyboard.dismiss();
     };
 
+    const updateCounterInputHandler = (num) => {
+        if (num === 1) {
+            changeCounter(counter + 1)
+        } else {
+            changeCounter(counter - 1)
+        }
+    };
+
     let confirmedOutput;
     if (confirmed) {
         confirmedOutput = (
             <Card style={styles.summaryContainer}>
                 <Text>You selected</Text>
                 <NumberContainer>{selectedNumber}</NumberContainer>
-                <Button title="START GAME" onPress={() => props.onStartGame(selectedNumber)}/>
+                <Button title="START GAME" onPress={() => props.onStartGame(selectedNumber)} />
             </Card>
         );
     }
+
+
 
     return (
         <TouchableWithoutFeedback onPress={() => {
@@ -69,6 +80,17 @@ const StartGame = props => {
                         <View style={styles.button}>
                             <Button title="Confirm" onPress={confirmInputHandler} color={colors.primary} />
                         </View>
+                    </View>
+                </Card>
+                <Card style={styles.inputContainer}>
+                    <NumberContainer>{counter}</NumberContainer>
+                    <View style={styles.buttonContainer}>
+                        <TouchableOpacity onPress={() => updateCounterInputHandler(2)}>
+                            <Text>Decrease</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity onPress={() => updateCounterInputHandler(1)}>
+                            <Text>Increase</Text>
+                        </TouchableOpacity>
                     </View>
                 </Card>
                 {confirmedOutput}
@@ -98,7 +120,7 @@ const styles = StyleSheet.create({
     buttonContainer: {
         flexDirection: 'row',
         width: '100%',
-        justifyContent: 'space-between',
+        justifyContent: 'space-around',
         paddingHorizontal: 15
     },
 
